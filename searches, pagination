@@ -1,0 +1,127 @@
+import React from "react";
+import ReactDOM from "react-dom";
+import "react-bootstrap";
+import axios from "axios";
+import "./styles.css";
+
+export class SearchRepo extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      searchval: "",
+      nameList: [],
+      perPage: 5,
+      currentPage: 1,
+      nameListLength: null
+    };
+    this.changeSearchVal = this.changeSearchVal.bind(this);
+  }
+  changeSearchVal(e) {
+    var inputVal = e.target.value;
+    this.setState({ searchval: inputVal });
+    axios
+      .get(
+        `https://api.github.com/search/repositories?q=${
+          this.state.searchval
+        }+language:assembly&sort=stars&order=desc`
+      )
+      .then(resp => {
+        if (resp.data === []) {
+          this.setState({ nameList: "No repo." });
+        } else {
+          console.log(resp.data.total_count);
+          this.setState({
+            nameList: resp.data.items,
+            nameListLength: resp.data.total_count
+          });
+          console.log(this.state.nameList);
+        }
+      });
+  }
+  nextBtn() {
+    var currPage = this.state.currentPage;
+    var repos = this.state.nameList
+    console.log("Len: " + repos.length)
+    var pagesNum = (Math.ceil(repos.length / this.state.perPage));
+    //console.log("Pages NUm: " + pagesNum);
+    if (currPage === pagesNum || repos.length === 0) {
+    } else {
+      var newPage = currPage + 1;
+      this.setState({ currentPage: newPage });
+    }
+  }
+  backBtn() {
+    var repos = this.state.nameList
+    var currPage = this.state.currentPage;
+    if (currPage <= 1 || repos.length === 0) {
+    } else {
+      var newPage = currPage - 1;
+      this.setState({ currentPage: newPage });
+    }
+  }
+  perPageNum(e) {
+    var pageno = e.target.value;
+    this.setState({ perPage: pageno });
+  }
+  render() {
+    var indexOfLastTodo = this.state.currentPage * this.state.perPage;
+    var indexOfFirstTodo = indexOfLastTodo - this.state.perPage;
+    console.log("Page " + this.state.currentPage + ", Last Todo: " + indexOfLastTodo + ", First Todo: " + indexOfFirstTodo);;
+    const repoArray = this.state.nameList;
+    var repoArrayLength = this.state.nameListLength;
+    //console.log(repoArrayLength);
+   // console.log(this.state.nameList[indexOfFirstTodo])
+    var repoList = repoArray.slice(indexOfFirstTodo, indexOfLastTodo);
+    //console.log(indexOfFirstTodo, indexOfLastTodo)
+    return (
+      <div>
+        {/* Search Input Box*/}
+        <input
+          placeholder="Search Repo"
+          onChange={this.changeSearchVal}
+          type="text"
+        />
+        <select onChange={this.perPageNum.bind(this)}>
+          <option value="5"> 5 </option>
+          <option value="10"> 10 </option>
+          <option value="15"> 15</option>
+          <option value="20"> 20</option>
+          <option value="25"> 25</option>
+        </select>
+        <p> {this.state.searchval} </p>
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Repo Title</th>
+              <th>Owner</th>
+              <th>Stars</th>
+              <th>Created at</th>
+            </tr>
+          </thead>
+          <tbody>
+            {repoList.map((eachitem) => (
+              <tr key={eachitem.id}>
+                <td>{eachitem.id} </td>
+                <td>{eachitem.name} </td>
+                <td>{eachitem.owner.login} </td>
+                <td> {eachitem.stargazers_count} </td>
+                <td> {eachitem.created_at} </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {/* Search Input Box*/}
+        <button onClick={this.backBtn.bind(this)}> Back </button>
+        <button onClick={this.nextBtn.bind(this)}> Next </button>
+        {/* Table*/}
+
+        {/*Table*/}
+      </div>
+    );
+  }
+}
+
+const rootElement = document.getElementById("root");
+ReactDOM.render(<SearchRepo />, rootElement);
