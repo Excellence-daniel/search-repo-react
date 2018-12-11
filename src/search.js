@@ -129,8 +129,9 @@ export class SearchRepo extends React.Component {
       <div>
       <h2><center> Search Repo React App </center></h2>
         <div className="col-md-12 normalize">
-          <input
+          <DebounceInput
             className="form-control"
+            debounceTimeout={500}
             placeholder="Search Repo"
             onChange={this.changeSearchVal}
             type="text"
