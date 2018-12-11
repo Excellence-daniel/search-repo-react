@@ -3,8 +3,8 @@ This application searches for repositories from github's api using axios get met
 
 
 ```
-## git clone https://github.com/Excellence-daniel/search-repo-react.git
-## npm install
-## cd search-repo-react
-## npm start
+git clone https://github.com/Excellence-daniel/search-repo-react.git
+npm install
+cd search-repo-react
+npm start
 ```
