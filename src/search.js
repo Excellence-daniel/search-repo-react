@@ -6,48 +6,42 @@ import "./search.css"
 import {AsyncStorage} from "AsyncStorage"
 import DisplayTable from './components/displayTable';
 
-let loader =  {
-  border: "6px solid #f3f3f3",
-  borderRadius: "50%",
-  borderTop: "6px solid #3498db",
-  width: "30px",
-  height: "30px",
-  //-webkitAnimation: "spin 2s linear infinite",
-  animation: "spin 2s linear infinite"
-}
-/*@   -webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
-}*/
-
 export class SearchRepo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       valueSearched: "",
-      nameList: [],
+      rePoList: [],
       perPage: 5,
       currentPage: 1,
       count: 0
     };
     this.changeSearchVal = this.changeSearchVal.bind(this);
-    this.sortBy.bind(this);
+    this.perPageNum = this.perPageNum.bind(this)
+    this.sortBy = this.sortBy.bind(this);
     this.compareBy.bind(this);
+    this.nextBtn = this.nextBtn.bind(this)
+    this.backBtn = this.backBtn.bind(this)
+  }
+
+  componentWillMount() {
+    if (localStorage.getItem("repoData")){
+      this.setState({ rePoList: JSON.parse(localStorage.getItem("repoData")) });
+      //sets the state rePoList[] to the list in the localStorage
+    }
   }
 
   changeSearchVal(e) {
     var inputVal = e.target.value;
     this.setState({ valueSearched: inputVal });
-    if (inputVal === ''){
-
-    }else{    
+    if (inputVal){
      axios
     .get(`https://api.github.com/search/repositories?q=${inputVal}`)
     .then(resp => {
       console.log(resp.data.total_count);
       this.setState({
-        nameList: resp.data.items,
-        nameListLength: resp.data.total_count
+        rePoList: resp.data.items,
+        rePoListLength: resp.data.total_count
       });
       localStorage.setItem("repoData", JSON.stringify(resp.data.items));
       AsyncStorage.setItem("repoValue", JSON.stringify(resp.data.items))
@@ -62,21 +56,19 @@ export class SearchRepo extends React.Component {
 }
   nextBtn() {
     var currPage = this.state.currentPage;
-    var repos = this.state.nameList;
+    var repos = this.state.rePoList;
     console.log("Len: " + repos.length);
     var pagesNum = Math.ceil(repos.length / this.state.perPage);
-    if (currPage === pagesNum || repos.length === 0) {
-    } else {
+    if (!(currPage === pagesNum || repos.length === 0)) {
       var newPage = currPage + 1;
       this.setState({ currentPage: newPage });
     }
   }
 
   backBtn() {
-    var repos = this.state.nameList;
+    var repos = this.state.rePoList;
     var currPage = this.state.currentPage;
-    if (currPage <= 1 || repos.length === 0) {
-    } else {
+    if (!(currPage <= 1 || repos.length === 0)) {
       var newPage = currPage - 1;
       this.setState({ currentPage: newPage });
     }
@@ -97,11 +89,10 @@ export class SearchRepo extends React.Component {
   }
   sortBy(key) {
     var k = this.state.count;
-    k = k + 1;
-    this.setState({ count: k++ });
-    let arrayCopy = this.state.nameList;
+    this.setState({ count: ++k });
+    let arrayCopy = this.state.rePoList;
     arrayCopy.sort(this.compareBy(key));
-    this.setState({ nameList: arrayCopy });
+    this.setState({ rePoList: arrayCopy });
   }
 
   perPageNum(e) {
@@ -119,8 +110,8 @@ export class SearchRepo extends React.Component {
     .then(resp => {
       console.log(resp.data.total_count);
       this.setState({
-        nameList: resp.data.items,
-        nameListLength: resp.data.total_count
+        rePoList: resp.data.items,
+        rePoListLength: resp.data.total_count
       });
       localStorage.setItem("repoData", JSON.stringify(resp.data.items));
       AsyncStorage.setItem("repoValue", JSON.stringify(resp.data.items))
@@ -133,14 +124,7 @@ export class SearchRepo extends React.Component {
     });
 }
 }
-  componentWillMount() {
-    if (localStorage.getItem("repoData") == null) {
-      //alert("empty");
-    } else {
-      //alert("not empty!");
-      this.setState({ nameList: JSON.parse(localStorage.getItem("repoData")) });
-    }
-  }
+
   render() {
     var indexOfLastTodo = this.state.currentPage * this.state.perPage;
     var indexOfFirstTodo = indexOfLastTodo - this.state.perPage;
@@ -152,7 +136,7 @@ export class SearchRepo extends React.Component {
         ", First Todo: " +
         indexOfFirstTodo
     );
-    const repoArray = this.state.nameList;
+    const repoArray = this.state.rePoList;
     var repoList = repoArray.slice(indexOfFirstTodo, indexOfLastTodo);
     return (
       <div>
@@ -162,20 +146,19 @@ export class SearchRepo extends React.Component {
             className="form-control"
             placeholder="Search Repo"
             onChange={this.changeSearchVal}
-            type="text"
+            type="text" 
           />
           <center><button className = "btn" style = {{marginTop: '1%'}}onClick = {this.onClickSearch.bind(this)}> Search </button></center>
         </div>
 
         <DisplayTable
-          perPageNum={this.perPageNum.bind(this)}
+          perPageNum={this.perPageNum}
           searchval={this.state.searchval}
           repoList={repoList}
-          backBtn={this.backBtn.bind(this)}
-          nextBtn={this.nextBtn.bind(this)}
-          sortBy={this.sortBy.bind(this)}
+          backBtn={this.backBtn}
+          nextBtn={this.nextBtn}
+          sortBy={this.sortBy}
         />
-       {/* <div style ={loader}> </div> */}
       </div>
     );
   }
