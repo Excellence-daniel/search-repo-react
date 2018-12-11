@@ -10,6 +10,7 @@
     "npm": "^6.4.1",
     "react": "^16.6.3",
     "react-bootstrap": "^0.32.4",
+    "react-debounce-input": "^3.2.0",
     "react-dom": "^16.6.3",
     "react-firebase": "^2.2.8",
     "react-github-login": "^1.0.3",

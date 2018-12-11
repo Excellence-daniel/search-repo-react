@@ -81,8 +81,7 @@ export class SearchRepo extends React.Component {
       this.setState({ currentPage: newPage });
     }
   }
-  //functions are declared
-
+  
   compareBy(key) {
     var count = this.state.count;
     return function(a, b) {
