@@ -19,6 +19,7 @@ export class SearchRepo extends React.Component {
       rePoList: [],
       perPage: 5,
       currentPage: 1,
+      btnDisplay: 'none',
       count: 0
     };
     this.changeSearchVal = this.changeSearchVal.bind(this);
@@ -30,11 +31,34 @@ export class SearchRepo extends React.Component {
   }
 
   componentWillMount() {
-    if (localStorage.getItem("repoData")){
-      this.setState({ rePoList: JSON.parse(localStorage.getItem("repoData")) });
+    if ((localStorage.getItem("repoData")).length > 2){
+      this.setState({ rePoList: JSON.parse(localStorage.getItem("repoData")), btnDisplay : '' });
       //sets the state rePoList[] to the list in the localStorage
+    } else {
+      alert("i am empty!")
+      this.setState({btnDisplay: 'none'})
     }
   }
+
+  async changeSearchVal(e) {
+    var inputVal = e.target.value;
+    this.setState({ repoNameSearched: inputVal });
+    if (inputVal){
+     const resp = await apiGetter(inputVal)
+     this.setState({
+       rePoList: resp.data.items,
+       rePoListLength: resp.data.total_count,
+     });
+     if (resp.data.total_count > 0){
+     localStorage.setItem("repoData", JSON.stringify(resp.data.items));
+     AsyncStorage.setItem("repoValue", JSON.stringify(resp.data.items));
+     this.setState({btnDisplay: ''})
+   } else {
+        this.setState({btnDisplay: 'none'})
+   }
+  }
+}
+
   async onClickSearch(){
     var inputVal = this.state.repoNameSearched
       if (inputVal === ''){
@@ -46,25 +70,16 @@ export class SearchRepo extends React.Component {
             rePoList: resp.data.items,
             rePoListLength: resp.data.total_count
           });
+          if (resp.data.total_count > 0){
           localStorage.setItem("repoData", JSON.stringify(resp.data.items));
-          AsyncStorage.setItem("repoValue", JSON.stringify(resp.data.items))
+          AsyncStorage.setItem("repoValue", JSON.stringify(resp.data.items));
+          this.setState({btnDisplay: ''})
+        } else {
+     this.setState({btnDisplay: 'none'})
+        }
     }
   }
 
-  async changeSearchVal(e) {
-    var inputVal = e.target.value;
-    this.setState({ repoNameSearched: inputVal });
-    if (inputVal){
-     const resp = await apiGetter(inputVal)
-     console.log("Data count", resp.data.total_count)
-     this.setState({
-       rePoList: resp.data.items,
-       rePoListLength: resp.data.total_count
-     });
-     localStorage.setItem("repoData", JSON.stringify(resp.data.items));
-     AsyncStorage.setItem("repoValue", JSON.stringify(resp.data.items))
-  }
-}
   nextBtn() {
     var currPage = this.state.currentPage;
     var repos = this.state.rePoList;
@@ -98,13 +113,13 @@ export class SearchRepo extends React.Component {
       return 0;
     };
   }
+
   sortBy(key) {
     var k = this.state.count;
     k+=1
-    this.setState({ count: k });
     let arrayCopy = this.state.rePoList;
     arrayCopy.sort(this.compareBy(key));
-    this.setState({ rePoList: arrayCopy });
+    this.setState({ rePoList: arrayCopy, count: k });
   }
 
   perPageNum(e) {
@@ -144,6 +159,7 @@ export class SearchRepo extends React.Component {
           searchval={this.state.searchval}
           repoList={repoList}
           backBtn={this.backBtn}
+          btnDisplay = {this.state.btnDisplay}
           nextBtn={this.nextBtn}
           sortBy={this.sortBy}
         />

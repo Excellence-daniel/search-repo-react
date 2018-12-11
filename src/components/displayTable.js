@@ -1,6 +1,7 @@
 import React from "react";
 
 export default props => {
+  const style = {display : props.btnDisplay}
   return (
     <div>
       <div className="col-md-12 normalize">
@@ -64,8 +65,8 @@ export default props => {
       </table>
 
       <center>
-        <button className = "btn btn-primary" onClick={props.backBtn}> Back </button> &nbsp; &nbsp;
-        <button className = "btn btn-primary" onClick={props.nextBtn}> Next </button>
+        <button className = "btn btn-primary" style = {style} onClick={props.backBtn}> Back </button> &nbsp; &nbsp;
+        <button className = "btn btn-primary" style = {{display: props.btnDisplay}} onClick={props.nextBtn}> Next </button>
       </center>
     </div>
   );
