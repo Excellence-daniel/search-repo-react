@@ -1,16 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import axios from "axios";
+import axios from 'axios'
 import "./search.css"
 
 import {AsyncStorage} from "AsyncStorage"
 import DisplayTable from './components/displayTable';
+import {apiGetter} from './components/getRepoApi';
+
 
 export class SearchRepo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      valueSearched: "",
+      repoNameSearched: "",
       rePoList: [],
       perPage: 5,
       currentPage: 1,
@@ -30,28 +32,34 @@ export class SearchRepo extends React.Component {
       //sets the state rePoList[] to the list in the localStorage
     }
   }
+  async onClickSearch(){
+    var inputVal = this.state.repoNameSearched
+      if (inputVal === ''){
+        alert ("You have to input a Repo Name to be searched")
+      } else {
+          const resp = await apiGetter(inputVal)
+          //console.log("Data count", resp.data.total_count)
+          this.setState({
+            rePoList: resp.data.items,
+            rePoListLength: resp.data.total_count
+          });
+          localStorage.setItem("repoData", JSON.stringify(resp.data.items));
+          AsyncStorage.setItem("repoValue", JSON.stringify(resp.data.items))
+    }
+  }
 
-  changeSearchVal(e) {
+  async changeSearchVal(e) {
     var inputVal = e.target.value;
-    this.setState({ valueSearched: inputVal });
+    this.setState({ repoNameSearched: inputVal });
     if (inputVal){
-     axios
-    .get(`https://api.github.com/search/repositories?q=${inputVal}`)
-    .then(resp => {
-      console.log(resp.data.total_count);
-      this.setState({
-        rePoList: resp.data.items,
-        rePoListLength: resp.data.total_count
-      });
-      localStorage.setItem("repoData", JSON.stringify(resp.data.items));
-      AsyncStorage.setItem("repoValue", JSON.stringify(resp.data.items))
-        .then(() => {
-          console.log("It was saved successfully");
-        })
-        .catch(() => {
-          console.log("There was an error saving the product");
-        });
-    });
+     const resp = await apiGetter(inputVal)
+     console.log("Data count", resp.data.total_count)
+     this.setState({
+       rePoList: resp.data.items,
+       rePoListLength: resp.data.total_count
+     });
+     localStorage.setItem("repoData", JSON.stringify(resp.data.items));
+     AsyncStorage.setItem("repoValue", JSON.stringify(resp.data.items))
   }
 }
   nextBtn() {
@@ -89,7 +97,8 @@ export class SearchRepo extends React.Component {
   }
   sortBy(key) {
     var k = this.state.count;
-    this.setState({ count: ++k });
+    k+=1
+    this.setState({ count: k });
     let arrayCopy = this.state.rePoList;
     arrayCopy.sort(this.compareBy(key));
     this.setState({ rePoList: arrayCopy });
@@ -99,31 +108,6 @@ export class SearchRepo extends React.Component {
     var pageno = e.target.value;
     this.setState({ perPage: pageno });
   }
-  onClickSearch(){
-    var val = this.state.valueSearched
-      //alert(val)
-      if (val === ''){
-        alert ("You have to input a Repo Name to be searched")
-      } else{
-  axios
-    .get(`https://api.github.com/search/repositories?q=${val}`)
-    .then(resp => {
-      console.log(resp.data.total_count);
-      this.setState({
-        rePoList: resp.data.items,
-        rePoListLength: resp.data.total_count
-      });
-      localStorage.setItem("repoData", JSON.stringify(resp.data.items));
-      AsyncStorage.setItem("repoValue", JSON.stringify(resp.data.items))
-        .then(() => {
-          console.log("It was saved successfully");
-        })
-        .catch(() => {
-          console.log("There was an error saving the product");
-        });
-    });
-}
-}
 
   render() {
     var indexOfLastTodo = this.state.currentPage * this.state.perPage;
@@ -146,7 +130,7 @@ export class SearchRepo extends React.Component {
             className="form-control"
             placeholder="Search Repo"
             onChange={this.changeSearchVal}
-            type="text" 
+            type="text"
           />
           <center><button className = "btn" style = {{marginTop: '1%'}}onClick = {this.onClickSearch.bind(this)}> Search </button></center>
         </div>
