@@ -1,11 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import axios from 'axios'
-import "./search.css"
+import './bootstrap.css'
 
-import {AsyncStorage} from "AsyncStorage"
 import DisplayTable from './components/displayTable';
 import {apiGetter} from './components/getRepoApi';
+
+import axios from 'axios'
+import {AsyncStorage} from "AsyncStorage"
+import {DebounceInput} from 'react-debounce-input';
 
 
 export class SearchRepo extends React.Component {
