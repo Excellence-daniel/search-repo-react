@@ -1,21 +1,26 @@
 import React from "react";
+import PropTypes from 'prop-types'
 
 export default props => {
+  /*propTypes: {
+    perPageNum : PropTypes.number,
+    btnDisplay : PropTypes.string,
+    usersName : PropTypes.string,
+    searchval : PropTypes.string,
+    sortBy : PropTypes.func,
+    backBtn : PropTypes.func,
+    nextBtn : PropTypes.func,
+    repoList: PropTypes.array
+  } */
+  const style = {display : props.btnDisplay}
   return (
     <div>
-      <div className="col-md-12 normalize">
-        <center>
-          <select style={{marginTop:'1%'}} onChange={props.perPageNum}>
-            <option value="5"> 5 </option>
-            <option value="10"> 10 </option>
-            <option value="15"> 15</option>
-            <option value="20"> 20</option>
-            <option value="25"> 25</option>
-          </select>
-        </center>
+      <div className="col-md-12" style = {{marginTop: '2%'}}>
       </div>
       <p className="col-md-12 normalize"> {props.searchval} </p>
-      <table className="table table-hover" style={{ marginTop: "1%" }}>
+      <div class = "col-md-2"> </div>
+      <div class = "col-md-8">
+      <table className="table table-bordered" style={{ marginTop: "1%" }}>
         <thead className="thead-dark">
           <tr>
             <th
@@ -52,7 +57,7 @@ export default props => {
         </thead>
         <tbody className="tbody-light">
           {props.repoList.map(eachitem => (
-            <tr key={eachitem.id} style={{background: eachitem.owner.login === 'toystars'? 'green' :'none'}}>
+            <tr key={eachitem.id} style={{background: eachitem.owner.login === props.usersName ? '#337ab773' :'none'}}>
               <td>{eachitem.id} </td>
               <td>{eachitem.name} </td>
               <td>{eachitem.owner.login} </td>
@@ -62,11 +67,14 @@ export default props => {
           ))}
         </tbody>
       </table>
-
+      </div>
+      <div class = "col-md-2"></div>
+      <div class = "col-md-12">
       <center>
-        <button className = "btn btn-primary" onClick={props.backBtn}> Back </button> &nbsp; &nbsp;
-        <button className = "btn btn-primary" onClick={props.nextBtn}> Next </button>
+        <button className = "btn btn-primary" style = {style} onClick={props.backBtn}> Back </button> &nbsp; &nbsp;
+        <button className = "btn btn-primary" style = {{display: props.btnDisplay}} onClick={props.nextBtn}> Next </button>
       </center>
+      </div>
     </div>
   );
 };
