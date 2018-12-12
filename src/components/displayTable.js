@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from 'prop-types'
 import { FaChevronRight, FaChevronLeft } from 'react-icons/fa';
 
-export default props => {
+export default function DisplayTable (props) {
   /*propTypes: {
     perPageNum : PropTypes.number,
     btnDisplay : PropTypes.string,
@@ -77,3 +77,13 @@ export default props => {
     </div>
   );
 };
+DisplayTable.propTypes = {
+  perPageNum : PropTypes.number,
+  btnDisplay : PropTypes.string,
+  usersName : PropTypes.string,
+  searchval : PropTypes.string,
+  sortBy : PropTypes.func,
+  backBtn : PropTypes.func,
+  nextBtn : PropTypes.func,
+  repoList: PropTypes.array
+}
