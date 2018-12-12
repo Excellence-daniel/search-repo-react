@@ -147,18 +147,43 @@ import {DebounceInput} from 'react-debounce-input';
             var repoList = repoArray.slice(indexOfFirstTodo, indexOfLastTodo);
             return (
               <div>
-              <h2><center> Search Repo React App </center></h2>
+              <h1><center> Search Repo React App </center></h1>
+
+              <div style = {{marginTop: '5%'}}> </div>
+
+              <div className = "col-md-3" style = {{marginTop : '5%'}}>
                 <div className="col-md-12 normalize">
+
                   <DebounceInput
                     className="form-control"
+                    style = {{height: '40px', fontSize : '18px', marginTop : '2%', borderRadius : '0px'}}
                     debounceTimeout={500}
-                    placeholder="Search Repo"
+                    placeholder="Search..."
                     onChange={this.changeSearchVal}
                     type="text"
                   />
-                  <center><button className = "btn" style = {{marginTop: '1%'}}onClick = {this.onClickSearch.bind(this)}> Search </button></center>
-                </div>
 
+                  <input
+                    className="form-control"
+                    style = {{height: '40px', fontSize : '18px', borderRadius : '0px', marginTop : '3%'}}
+                    placeholder="Username..."
+                    type="text"
+                  />
+
+                  <select style={{marginTop:'1%'}} class = "form-control" style = {{height: '40px', borderRadius: '0px', fontSize : '18px', marginTop : '3%'}} onChange={this.perPageNum}>
+                    <option value="5"> 5 </option>
+                    <option value="10"> 10 </option>
+                    <option value="15"> 15</option>
+                    <option value="20"> 20</option>
+                    <option value="25"> 25</option>
+                  </select>
+
+                  <center>
+                    <button className = "btn btn-block btn-primary" style = {{marginTop: '3%', borderRadius: '0px'}}onClick = {this.onClickSearch.bind(this)}> Search </button>
+                  </center>
+                </div>
+                </div>
+                <div className = "col-md-9">
                 <DisplayTable
                   perPageNum={this.perPageNum}
                   searchval={this.state.searchval}
@@ -168,6 +193,7 @@ import {DebounceInput} from 'react-debounce-input';
                   nextBtn={this.nextBtn}
                   sortBy={this.sortBy}
                 />
+                </div>
               </div>
             );
           }

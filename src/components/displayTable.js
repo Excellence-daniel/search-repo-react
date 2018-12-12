@@ -1,19 +1,20 @@
 import React from "react";
+import PropTypes from 'prop-types'
 
 export default props => {
+  /*propTypes: {
+    perPageNum : PropTypes.number,
+    btnDisplay : PropTypes.string,
+    searchval : PropTypes.string,
+    sortBy : PropTypes.func,
+    backBtn : PropTypes.func,
+    nextBtn : PropTypes.func,
+    repoList: PropTypes.array
+  } */
   const style = {display : props.btnDisplay}
   return (
     <div>
-      <div className="col-md-12 normalize">
-        <center>
-          <select style={{marginTop:'1%'}} onChange={props.perPageNum}>
-            <option value="5"> 5 </option>
-            <option value="10"> 10 </option>
-            <option value="15"> 15</option>
-            <option value="20"> 20</option>
-            <option value="25"> 25</option>
-          </select>
-        </center>
+      <div className="col-md-12" style = {{marginTop: '6%'}}>
       </div>
       <p className="col-md-12 normalize"> {props.searchval} </p>
       <table className="table table-hover" style={{ marginTop: "1%" }}>
