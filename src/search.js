@@ -4,6 +4,7 @@ import './bootstrap.css'
 
 import DisplayTable from './components/displayTable';
 import {apiGetter} from './components/getRepoApi';
+import {styleInputs, divStyle} from './styles/styles'
 //components
 
 import axios from 'axios'
@@ -33,7 +34,7 @@ import {DebounceInput} from 'react-debounce-input';
           }
 
           componentWillMount() {
-            if ((localStorage.getItem("repoData")).length > 2){
+            if (localStorage.getItem("repoData")){
               this.setState({ rePoList: JSON.parse(localStorage.getItem("repoData")), btnDisplay : '' });
               //sets the state rePoList[] to the list in the localStorage and make button display
             } else {
@@ -136,35 +137,35 @@ import {DebounceInput} from 'react-debounce-input';
             var repoList = repoArray.slice(indexOfFirstTodo, indexOfLastTodo);
             return (
               <div>
-                  <center> <h3> SEARCH GITHUB REPOSITORIES </h3> </center>
               <div class = "col-md-12">
-              <center> <img src = "Github-Mark.png" class = "img-responsive" style = {{width: '5%'}}/> </center>
+              <p><center> <img src = "Github-Mark.png" class = "img-responsive" style = {{width: '7%'}}/> </center>
+              <center><b> REPO SEARCH </b></center></p>
               <div class = "col-md-3"> </div>
               <div class = "col-md-6">
-                <div class = "col-md-4" style = {{paddingLeft: '0px', paddingRight: '0px'}}>
+                <div class = "col-md-6" style = {divStyle}>
                   <DebounceInput
                       onChange={this.changeSearchVal}
                       type = "text"
                       class = "form-control"
                       placeholder="Repo Name..."
                       debounceTimeout={500}
-                      style = {{borderRadius: '0px', height: '60px', boxShadow : '5px 10px #8888881f'}}/>
+                      style = {styleInputs}/>
                 </div>
 
-                <div class = "col-md-4" style = {{paddingLeft: '0px', paddingRight: '0px'}}>
+                <div class = "col-md-4" style = {divStyle}>
                   <input
                       class = "form-control"
                       onChange = {this.userNameVal}
                       placeholder="Github Username..."
                       type="text"
-                      style = {{borderRadius: '0px', height: '60px', boxShadow : '5px 10px #8888881f'}}/>
+                      style = {styleInputs}/>
                 </div>
 
-                <div class = "col-md-4" style = {{paddingLeft: '0px', paddingRight: '0px'}}>
+                <div class = "col-md-2" style = {divStyle}>
                   <select
                     class = "form-control"
                     onChange={this.perPageNum}
-                    style = {{borderRadius: '0px', height: '60px', boxShadow : '5px 10px #8888881f'}}>
+                    style = {styleInputs}>
                   <option value="5"> 5 </option>
                   <option value="10"> 10 </option>
                   <option value="15"> 15</option>

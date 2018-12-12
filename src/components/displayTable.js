@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from 'prop-types'
+import { FaChevronRight, FaChevronLeft } from 'react-icons/fa';
 
 export default props => {
   /*propTypes: {
@@ -12,7 +13,7 @@ export default props => {
     nextBtn : PropTypes.func,
     repoList: PropTypes.array
   } */
-  const style = {display : props.btnDisplay}
+  const styleBtn = {display : props.btnDisplay, borderRadius: '50%', background: '#bbc5ce', borderColor: '#bbc5ce'}
   return (
     <div>
       <div className="col-md-12" style = {{marginTop: '2%'}}>
@@ -20,7 +21,7 @@ export default props => {
       <p className="col-md-12 normalize"> {props.searchval} </p>
       <div class = "col-md-2"> </div>
       <div class = "col-md-8">
-      <table className="table table-bordered" style={{ marginTop: "1%" }}>
+      <table className="table table-bordered" style={{ marginTop: "1%", display: props.btnDisplay }}>
         <thead className="thead-dark">
           <tr>
             <th
@@ -67,14 +68,12 @@ export default props => {
           ))}
         </tbody>
       </table>
+      <p style = {{float: 'right'}}>
+        <button className = "btn btn-primary" style = {styleBtn} onClick={props.backBtn}><center><FaChevronLeft style = {{fontSize: '10px'}}/></center></button> &nbsp; &nbsp;
+        <button className = "btn btn-primary" style = {styleBtn} onClick={props.nextBtn}><center><FaChevronRight style = {{fontSize: '10px'}}/></center></button>
+      </p>
       </div>
       <div class = "col-md-2"></div>
-      <div class = "col-md-12">
-      <center>
-        <button className = "btn btn-primary" style = {style} onClick={props.backBtn}> Back </button> &nbsp; &nbsp;
-        <button className = "btn btn-primary" style = {{display: props.btnDisplay}} onClick={props.nextBtn}> Next </button>
-      </center>
-      </div>
     </div>
   );
 };
