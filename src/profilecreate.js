@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { FaTrashAlt } from 'react-icons/fa';
-import './search.css'
+import './bootstrap.css'
 
 export class ProfileCreator extends React.Component{
 constructor(props){

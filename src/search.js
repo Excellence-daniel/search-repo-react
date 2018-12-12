@@ -20,7 +20,8 @@ import {DebounceInput} from 'react-debounce-input';
               perPage: 5,
               currentPage: 1,
               btnDisplay: 'none',
-              count: 0
+              count: 0,
+              usersName: ''
             };
             this.changeSearchVal = this.changeSearchVal.bind(this);
             this.perPageNum = this.perPageNum.bind(this)
@@ -28,6 +29,7 @@ import {DebounceInput} from 'react-debounce-input';
             this.compareBy.bind(this);
             this.nextBtn = this.nextBtn.bind(this)
             this.backBtn = this.backBtn.bind(this)
+            this.userNameVal =  this.userNameVal.bind(this)
           }
 
           componentWillMount() {
@@ -67,27 +69,14 @@ import {DebounceInput} from 'react-debounce-input';
           }
         }
 
-          async onClickSearch(){
-            var inputVal = this.state.repoNameSearched
-              if (inputVal === ''){
-                alert ("You have to input a Repo Name to be searched")
-                  //display this is button is clicked to fecth data and no text is in the textbox
-              } else {
-                  const resp = await apiGetter(inputVal)
-                  this.setState({
-                    rePoList: resp.data.items
-                  });
-                  if (resp.data.total_count > 0){
-                    localStorage.setItem("repoData", JSON.stringify(resp.data.items));
-                    AsyncStorage.setItem("repoValue", JSON.stringify(resp.data.items));
-                    this.setState({btnDisplay: ''})
-                  //store fetched data in localStorage and AsyncStorage for persistence and also display pagination buttons if data is gotten from the API
-                } else {
-                    this.setState({btnDisplay: 'none'})
-                      //set button display to none
-                }
-            }
+        userNameVal(e){
+          var usersname = e.target.value
+            if (usersname){
+            this.setState({usersName : usersname})
+            //picks the git username of the user and saves in the state
           }
+        }
+
 
           nextBtn() {
             var currPage = this.state.currentPage;
@@ -147,54 +136,60 @@ import {DebounceInput} from 'react-debounce-input';
             var repoList = repoArray.slice(indexOfFirstTodo, indexOfLastTodo);
             return (
               <div>
-              <h1><center> Search Repo React App </center></h1>
-
-              <div style = {{marginTop: '5%'}}> </div>
-
-              <div className = "col-md-3" style = {{marginTop : '5%'}}>
-                <div className="col-md-12 normalize">
-
+                  <center> <h3> SEARCH GITHUB REPOSITORIES </h3> </center>
+              <div class = "col-md-12">
+              <center> <img src = "Github-Mark.png" class = "img-responsive" style = {{width: '5%'}}/> </center>
+              <div class = "col-md-3"> </div>
+              <div class = "col-md-6">
+                <div class = "col-md-4" style = {{paddingLeft: '0px', paddingRight: '0px'}}>
                   <DebounceInput
-                    className="form-control"
-                    style = {{height: '40px', fontSize : '18px', marginTop : '2%', borderRadius : '0px'}}
-                    debounceTimeout={500}
-                    placeholder="Search..."
-                    onChange={this.changeSearchVal}
-                    type="text"
-                  />
+                      onChange={this.changeSearchVal}
+                      type = "text"
+                      class = "form-control"
+                      placeholder="Repo Name..."
+                      debounceTimeout={500}
+                      style = {{borderRadius: '0px', height: '60px', boxShadow : '5px 10px #8888881f'}}/>
+                </div>
 
+                <div class = "col-md-4" style = {{paddingLeft: '0px', paddingRight: '0px'}}>
                   <input
-                    className="form-control"
-                    style = {{height: '40px', fontSize : '18px', borderRadius : '0px', marginTop : '3%'}}
-                    placeholder="Username..."
-                    type="text"
-                  />
-
-                  <select style={{marginTop:'1%'}} class = "form-control" style = {{height: '40px', borderRadius: '0px', fontSize : '18px', marginTop : '3%'}} onChange={this.perPageNum}>
-                    <option value="5"> 5 </option>
-                    <option value="10"> 10 </option>
-                    <option value="15"> 15</option>
-                    <option value="20"> 20</option>
-                    <option value="25"> 25</option>
-                  </select>
-
-                  <center>
-                    <button className = "btn btn-block btn-primary" style = {{marginTop: '3%', borderRadius: '0px'}}onClick = {this.onClickSearch.bind(this)}> Search </button>
-                  </center>
+                      class = "form-control"
+                      onChange = {this.userNameVal}
+                      placeholder="Github Username..."
+                      type="text"
+                      style = {{borderRadius: '0px', height: '60px', boxShadow : '5px 10px #8888881f'}}/>
                 </div>
+
+                <div class = "col-md-4" style = {{paddingLeft: '0px', paddingRight: '0px'}}>
+                  <select
+                    class = "form-control"
+                    onChange={this.perPageNum}
+                    style = {{borderRadius: '0px', height: '60px', boxShadow : '5px 10px #8888881f'}}>
+                  <option value="5"> 5 </option>
+                  <option value="10"> 10 </option>
+                  <option value="15"> 15</option>
+                  <option value="20"> 20</option>
+                  <option value="25"> 25</option>
+                </select>
                 </div>
-                <div className = "col-md-9">
+
+              </div>
+              <div class = "col-md-3"> </div>
+              </div>
+
+              <div style = {{marginTop: '2%'}}> </div>
+
                 <DisplayTable
                   perPageNum={this.perPageNum}
                   searchval={this.state.searchval}
                   repoList={repoList}
+                  usersName={this.state.usersName}
                   backBtn={this.backBtn}
                   btnDisplay = {this.state.btnDisplay}
                   nextBtn={this.nextBtn}
                   sortBy={this.sortBy}
                 />
                 </div>
-              </div>
             );
           }
         }
