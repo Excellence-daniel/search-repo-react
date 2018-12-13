@@ -4,7 +4,7 @@ import './bootstrap.css'
 
 import DisplayTable from './components/displayTable';
 import {apiGetter} from './components/getRepoApi';
-import {styleInputs, divStyle} from './styles/styles'
+import {styleInputs, divStyle} from './styles/styles'  //styles
 //components
 
 import axios from 'axios'
