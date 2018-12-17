@@ -4,7 +4,7 @@ import './bootstrap.css'
 
 import DisplayTable from './components/displayTable';
 import {apiGetter} from './components/getRepoApi';
-import {styleInputs, divStyle} from './styles/styles'  //styles
+import {styleInputs, divStyle, styleSelect} from './styles/styles'  //styles
 //components
 
 import axios from 'axios'
@@ -22,7 +22,12 @@ import {DebounceInput} from 'react-debounce-input';
               currentPage: 1,
               btnDisplay: 'none',
               count: 0,
-              usersName: ''
+              usersName: '',
+              pagesNum : null,
+              textDisplay : 'none',
+              nextBtnDisable : '',
+              backBtnDisable : '',
+              showLoader : 'none'
             };
             this.changeSearchVal = this.changeSearchVal.bind(this);
             this.perPageNum = this.perPageNum.bind(this)
@@ -36,9 +41,12 @@ import {DebounceInput} from 'react-debounce-input';
           componentWillMount() {
             if (localStorage.getItem("repoData")){
               this.setState({ rePoList: JSON.parse(localStorage.getItem("repoData")), btnDisplay : '' });
+              const pagesNum = Math.ceil(JSON.parse(localStorage.getItem("repoData")).length / this.state.perPage)
+              this.setState({pagesNum, textDisplay : 'none'})
               //sets the state rePoList[] to the list in the localStorage and make button display
+
             } else {
-              this.setState({btnDisplay: 'none'})
+              this.setState({btnDisplay: 'none', textDisplay : ''})
               //display nothing in the table and also set display for pagination (back and next) buttons to be none
             }
           }
@@ -47,27 +55,56 @@ import {DebounceInput} from 'react-debounce-input';
             var pageno = e.target.value;
             this.setState({ perPage: pageno });
           }
+          pageNumIncrease = () => {
+            var num = this.state.num;
+            if (num < 25){
+            num += 5;
+            this.setState({ num });
+          }
+          };
+
+          pageNumDecrease = () => {
+            var num = this.state.num;
+            if (num > 5){
+            num -= 1;
+            this.setState({ num });
+          }
+            //this.props.numnum(this.state.number);
+          };
 
           async changeSearchVal(e) {
+
             var inputVal = e.target.value;
-            this.setState({ repoNameSearched: inputVal });
+            this.setState({ repoNameSearched: inputVal, showLoader : ''});
             if (inputVal){
              const resp = await apiGetter(inputVal)
              this.setState({
-               rePoList: resp.data.items
+               rePoList: resp.data.items,
+               showLoader : 'none'
              });
+             const pagesNum = Math.ceil((this.state.rePoList).length / this.state.perPage)
+             this.setState({pagesNum, currentPage : 1})
+             if ((this.state.rePoList).length > this.state.perPage){
+               this.setState({nextBtnDisable : '', backBtnDisable : 'true'})
+             } else {
+               this.setState({nextBtnDisable : 'true', backBtnDisable : 'true'})
+
+             }
               //gets the called data from the imported function 'apiGetter' and sets states rePoList and rep
              if (resp.data.total_count > 0){
                //if any data is gotten from the api, save in localStorage and AsyncStorage as a persistence mechanism and activate display of buttons
              localStorage.setItem("repoData", JSON.stringify(resp.data.items));
              AsyncStorage.setItem("repoValue", JSON.stringify(resp.data.items));
-             this.setState({btnDisplay: ''})
+             this.setState({btnDisplay: '', textDisplay : 'none'})
            } else {
              //if no data is gotten from the API, deactivate display of the pagination (back and next) buttons
-                this.setState({btnDisplay: 'none'})
+                this.setState({btnDisplay: 'none', textDisplay : ''})
+
            }
 
-          }
+         } else {
+           this.setState({showLoader: 'none'})
+         }
         }
 
         userNameVal(e){
@@ -83,11 +120,13 @@ import {DebounceInput} from 'react-debounce-input';
             var currPage = this.state.currentPage;
             var repos = this.state.rePoList;
             console.log("Len: " + repos.length);
-            var pagesNum = Math.ceil(repos.length / this.state.perPage);
+            var pagesNum = Math.ceil(repos.length / this.state.perPage)
             //for pagination, length of array / number of data to be displayed on a page
             if (!(currPage === pagesNum || repos.length === 0)) {
               var newPage = currPage + 1;
-              this.setState({ currentPage: newPage });
+              this.setState({ currentPage: newPage, backBtnDisable : '' });
+            }else {
+              this.setState({nextBtnDisable : 'true', backBtnDisable: ''})
             }
           }
 
@@ -96,7 +135,9 @@ import {DebounceInput} from 'react-debounce-input';
             var currPage = this.state.currentPage;
             if (!(currPage <= 1 || repos.length === 0)) {
               var newPage = currPage - 1;
-              this.setState({ currentPage: newPage });
+              this.setState({ currentPage: newPage, nextBtnDisable : '', backBtnDisable: ''});
+            }else {
+              this.setState({backBtnDisable : 'true', nextBtnDisable : ''})
             }
           }
 
@@ -163,9 +204,9 @@ import {DebounceInput} from 'react-debounce-input';
 
                 <div class = "col-md-2" style = {divStyle}>
                   <select
-                    class = "form-control"
+                    class = "form-control btn-success"
                     onChange={this.perPageNum}
-                    style = {styleInputs}>
+                    style = {styleSelect}>
                   <option value="5"> 5 </option>
                   <option value="10"> 10 </option>
                   <option value="15"> 15</option>
@@ -189,6 +230,12 @@ import {DebounceInput} from 'react-debounce-input';
                   btnDisplay = {this.state.btnDisplay}
                   nextBtn={this.nextBtn}
                   sortBy={this.sortBy}
+                  pagesNum = {this.state.pagesNum}
+                  currentPage = {this.state.currentPage}
+                  textDisplay = {this.state.textDisplay}
+                  backBtnDisable = {this.state.backBtnDisable}
+                  nextBtnDisable = {this.state.nextBtnDisable}
+                  showLoader = {this.state.showLoader}
                 />
                 </div>
             );

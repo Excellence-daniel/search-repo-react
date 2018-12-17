@@ -7,8 +7,6 @@ import {SearchRepo} from './search'
 import {LoginBtn} from './auth'
 
 
-import {ProfileCreator} from './profilecreate'
-
 ReactDOM.render(<SearchRepo />, document.getElementById('root'));
 //ReactDOM.render(<LoginBtn/>, document.getElementById('root'));
 //ReactDOM.render(<ProfileCreator/>, document.getElementById('root'))
