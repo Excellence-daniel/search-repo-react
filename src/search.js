@@ -43,59 +43,47 @@ import {DebounceInput} from 'react-debounce-input';
               this.setState({ rePoList: JSON.parse(localStorage.getItem("repoData")), btnDisplay : '' });
               const pagesNum = Math.ceil(JSON.parse(localStorage.getItem("repoData")).length / this.state.perPage)
               this.setState({pagesNum, textDisplay : 'none'})
-              //sets the state rePoList[] to the list in the localStorage and make button display
+              //sets the state rePoList[] to the list in the localStorage and make pagination button display
+              //also get how many pages the list has with regards to the number of repos displayed on a page, set it into a state and make textDisplay('Noresults') display to be none
 
             } else {
               this.setState({btnDisplay: 'none', textDisplay : ''})
-              //display nothing in the table and also set display for pagination (back and next) buttons to be none
+              //display nothing in the table,  set display for pagination (back and next) buttons to be none and set Textdisplay to display 
             }
           }
 
           perPageNum(e) {
-            var pageno = e.target.value;
-            this.setState({ perPage: pageno });
+            var pageno = e.target.value; //get number selected from select dropdown
+             const pagesNum = Math.ceil((this.state.rePoList).length / pageno) //get number of pages the list would have with regards to 'pageno'
+            this.setState({ perPage: pageno, pagesNum , currentPage : 1 }); //set state and also make currentPage = 1
+            
           }
-          pageNumIncrease = () => {
-            var num = this.state.num;
-            if (num < 25){
-            num += 5;
-            this.setState({ num });
-          }
-          };
-
-          pageNumDecrease = () => {
-            var num = this.state.num;
-            if (num > 5){
-            num -= 1;
-            this.setState({ num });
-          }
-            //this.props.numnum(this.state.number);
-          };
 
           async changeSearchVal(e) {
-
             var inputVal = e.target.value;
-            this.setState({ repoNameSearched: inputVal, showLoader : ''});
+            this.setState({ repoNameSearched: inputVal, showLoader : ''}); //onchange of the textbox, activate loader
             if (inputVal){
              const resp = await apiGetter(inputVal)
+             //set result into state and stop loader 
              this.setState({
                rePoList: resp.data.items,
                showLoader : 'none'
              });
-             const pagesNum = Math.ceil((this.state.rePoList).length / this.state.perPage)
-             this.setState({pagesNum, currentPage : 1})
-             if ((this.state.rePoList).length > this.state.perPage){
-               this.setState({nextBtnDisable : '', backBtnDisable : 'true'})
-             } else {
-               this.setState({nextBtnDisable : 'true', backBtnDisable : 'true'})
 
+             const pagesNum = Math.ceil((this.state.rePoList).length / this.state.perPage) //get number of pages the list would have with regards to 'pageno'
+             this.setState({pagesNum, currentPage : 1}) //set to state and set currentPage to 1 
+             if ((this.state.rePoList).length > this.state.perPage){
+               this.setState({nextBtnDisable : '', backBtnDisable : 'true'})  //for pagination, if repoList.length > perPage, disable back btn and activate nextbtn
+             } else {
+               this.setState({nextBtnDisable : 'true', backBtnDisable : 'true'})//for pagination, if repoList.length <= perPage, disable both btns
              }
-              //gets the called data from the imported function 'apiGetter' and sets states rePoList and rep
+
+
              if (resp.data.total_count > 0){
                //if any data is gotten from the api, save in localStorage and AsyncStorage as a persistence mechanism and activate display of buttons
              localStorage.setItem("repoData", JSON.stringify(resp.data.items));
              AsyncStorage.setItem("repoValue", JSON.stringify(resp.data.items));
-             this.setState({btnDisplay: '', textDisplay : 'none'})
+             this.setState({btnDisplay: '', textDisplay : 'none'}) //set display of 'No results' to none and display pagination buttons
            } else {
              //if no data is gotten from the API, deactivate display of the pagination (back and next) buttons
                 this.setState({btnDisplay: 'none', textDisplay : ''})
