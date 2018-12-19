@@ -86,7 +86,7 @@ import {DebounceInput} from 'react-debounce-input';
              this.setState({btnDisplay: '', textDisplay : 'none'}) //set display of 'No results' to none and display pagination buttons
            } else {
              //if no data is gotten from the API, deactivate display of the pagination (back and next) buttons
-                this.setState({btnDisplay: 'none', textDisplay : ''})
+                this.setState({btnDisplay: 'none', textDisplay : ''}) //if nothing is gotten back from the API, set the pagination btns display to none and display textDisplay
 
            }
 
@@ -112,9 +112,9 @@ import {DebounceInput} from 'react-debounce-input';
             //for pagination, length of array / number of data to be displayed on a page
             if (!(currPage === pagesNum || repos.length === 0)) {
               var newPage = currPage + 1;
-              this.setState({ currentPage: newPage, backBtnDisable : '' });
+              this.setState({ currentPage: newPage, backBtnDisable : '' }); //if currPage < pagesNum or repos.length is not 0, enable backbtn
             }else {
-              this.setState({nextBtnDisable : 'true', backBtnDisable: ''})
+              this.setState({nextBtnDisable : 'true', backBtnDisable: ''}) //disable nextBtn and enable backbtn
             }
           }
 
@@ -123,9 +123,9 @@ import {DebounceInput} from 'react-debounce-input';
             var currPage = this.state.currentPage;
             if (!(currPage <= 1 || repos.length === 0)) {
               var newPage = currPage - 1;
-              this.setState({ currentPage: newPage, nextBtnDisable : '', backBtnDisable: ''});
+              this.setState({ currentPage: newPage, nextBtnDisable : '', backBtnDisable: ''});//while currPage is not less than 1 or repos.length != 0, enable nextBtn and backBtn
             }else {
-              this.setState({backBtnDisable : 'true', nextBtnDisable : ''})
+              this.setState({backBtnDisable : 'true', nextBtnDisable : ''})//disable backbtn and enable nextbtn
             }
           }
 
